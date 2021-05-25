@@ -1,0 +1,110 @@
+import pyttsx3
+import webbrowser
+import webbrowser as wb
+import sys
+import wolframalpha
+import wikipedia
+import datetime
+import speech_recognition as sr
+from googletrans import Translator
+
+r = sr.Recognizer()
+a = pyttsx3.init()
+client = wolframalpha.Client('AVR4W9-J4THELJAUL')
+
+def speak(audio):
+    print("computer:", audio)
+    a.say(audio)
+    a.runAndWait()
+
+d = int(datetime.datetime.now().hour)
+
+if d >= 0 and d <= 12:
+    speak('good morning sir')
+elif d > 12 and d <= 18:
+    speak('good afternoon sir')
+else:
+    speak('good evening sir')
+
+speak('I am Sam your Voice Assistance')
+speak('How can i help you')
+
+while True:
+    with sr.Microphone() as source:
+        print('listening....')
+        audio = r.listen(source, 0, 5)
+    text = r.recognize_google(audio)
+    print('you said:', format(text))
+    b = format(text)
+    if b == 'open youtube' or b == 'open YouTube':
+        speak('Ok sir as you wish')
+        webbrowser.open('www.youtube.com')
+        speak('opening youtube')
+    elif b == 'close youtube' or b == 'close YouTube':
+        speak('Okay sir')
+        webbrowser.close('www.youtube.com')
+        speak('closing youtube')
+    elif b == 'translator':
+        speak('speak sir')
+        with sr.Microphone() as source:
+            print('listening:')
+            audio = r.listen(source, 0, 5)
+        text = r.recognize_google(audio)
+        result = format(text)
+
+        p = Translator()
+        k = p.translate(result, dest='hi')
+        print(k.text)
+
+    elif b == 'open google' or b == 'open Google':
+        speak('okay sir')
+        webbrowser.open('www.google.com')
+        speak('opening google')
+
+    elif b == 'open facebook' or b == 'open Facebook':
+        speak('okay sir')
+        webbrowser.open('www.facebook.com')
+        speak('opening facebook')
+
+    elif b == 'what is your name':
+        speak('sir my name is sam and i am your voice assistance')
+
+    elif b == 'how are you' or b == "what's up":
+        speak('i am fine sir')
+
+    elif b == 'nothing' or b == 'abort' or b == 'stop':
+        speak('okay sir')
+        speak('thank you for using machine learning assistant')
+        sys.exit()
+
+    elif b == 'hello':
+        speak('hello sir welcome to the world of voice assistance')
+
+    elif b == 'bye':
+        speak('okay sir bye')
+        speak('thank you for using machine learning assistant')
+        sys.exit()
+
+    elif b == 'open':
+        speak('opening file')
+
+    else:
+        speak('searching...')
+        try:
+            try:
+                res = client.query(b)
+                output = next(res.results).text
+                speak(output)
+
+            except:
+                wb = wikipedia.summary(b, sentences=2)
+                speak('Got it.')
+                speak('WIKIPEDIA says - ')
+                speak(wb)
+
+        except:
+            chrome_path = 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe %s'
+            print('Sam think you said' + b)
+            f_text = 'https://www.googlw.co.in/search?q=' + b
+            wb.get(chrome_path).open(f_text)
+    speak('Next Command! Sir!')
